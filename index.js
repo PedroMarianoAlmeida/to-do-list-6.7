@@ -1,16 +1,17 @@
 const myID = '151'
 const baseURL = 'https://altcademy-to-do-list-api.herokuapp.com';
 
-let includeNewTaskRow = function(newTask) {
+let includeNewTaskRow = function(newTask , id) {
     $('#my-current-list').append(`<li class='text-left d-flex justify-content-between'>
-    <div class='d-inline'>
-        <input type='checkbox' class='mr-2'>
-        <span>${newTask}</span>
-    </div>
-    <div>
-        x
-    </div>
-    </li>`);    
+                                    <div class='d-inline'>
+                                        <input type='checkbox' class='mr-2'>
+                                        <span>${newTask}</span>
+                                    </div>
+                                    <div>
+                                        <span class='delete-item'> x </span>
+                                        <span class='d-none'>${id} <span>
+                                    </div>
+                                    </li>`);    
 }
 
 let showAllTasks = function(){
@@ -57,9 +58,14 @@ let insertActivity = function() {
     } , 1000);
 }
 
+let deleteItem = function() {
+    let intireRow = $(this).closest('li');
+}
+
 $(document).ready( function(){
     showAllTasks();
     $(document).on('click' , '.btn-add-item' , insertActivity);
+    $(document).on('click' , '.delete-item' , deleteItem);
 })
 
 
