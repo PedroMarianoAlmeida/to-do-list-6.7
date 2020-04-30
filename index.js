@@ -1,16 +1,27 @@
 const myID = '151'
 const baseURL = 'https://altcademy-to-do-list-api.herokuapp.com';
 
+let includeNewTaskRow = function(newTask) {
+    $('#my-current-list').append(`<li class='text-left d-flex justify-content-between'>
+    <div class='d-inline'>
+        <input type='checkbox' class='mr-2'>
+        <span>${newTask}</span>
+    </div>
+    <div>
+        x
+    </div>
+    </li>`);    
+}
+
 let showAllTasks = function(){
     $.ajax({
         type: 'GET',
         url: `${baseURL}/tasks?api_key=${myID}`,
         dataType: 'json',
         success: function (response, textStatus) {
-          console.log(typeof response.tasks);
-
           for(let task of response.tasks){
             console.log(task.content);
+            includeNewTaskRow(task.content);
           }
         },
 
@@ -35,7 +46,7 @@ let insertActivity = function() {
               }
             }),
             success: function (response, textStatus) {
-              console.log(response);
+              includeNewTaskRow($('#new-item').val());
               $('#new-item').val('');
             },
             error: function (request, textStatus, errorMessage) {
