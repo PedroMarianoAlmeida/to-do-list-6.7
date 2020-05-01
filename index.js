@@ -9,7 +9,7 @@ let includeNewTaskRow = function(newTask , id) {
                                     </div>
                                     <div>
                                         <span class='delete-item'> x </span>
-                                        <span class='d-none'>${id} <span>
+                                        <span class='id-item d-none'>${id} <span>
                                     </div>
                                     </li>`);    
 }
@@ -21,8 +21,8 @@ let showAllTasks = function(){
         dataType: 'json',
         success: function (response, textStatus) {
           for(let task of response.tasks){
-            console.log(task.content);
-            includeNewTaskRow(task.content);
+            //console.log(task);
+            includeNewTaskRow(task.content, task.id);
           }
         },
 
@@ -47,7 +47,8 @@ let insertActivity = function() {
               }
             }),
             success: function (response, textStatus) {
-              includeNewTaskRow($('#new-item').val());
+              //console.log(response.task);
+              includeNewTaskRow(response.task.content, response.task.id);
               $('#new-item').val('');
             },
             error: function (request, textStatus, errorMessage) {
@@ -60,6 +61,19 @@ let insertActivity = function() {
 
 let deleteItem = function() {
     let intireRow = $(this).closest('li');
+    let idToDelete = intireRow.find('.id-item').text();
+    $.ajax({
+      type: 'DELETE',
+      url: `${baseURL}/tasks/${idToDelete}?api_key=${myID}`,
+      success: function (response, textStatus) {
+        //console.log(response);
+        intireRow.remove();
+      },
+      error: function (request, textStatus, errorMessage) {
+        console.log(errorMessage);
+      }
+    });
+
 }
 
 $(document).ready( function(){
