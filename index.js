@@ -4,7 +4,7 @@ const baseURL = 'https://altcademy-to-do-list-api.herokuapp.com';
 let includeNewTaskRow = function(newTask , id) {
     $('#my-current-list').append(`<li class='text-left d-flex justify-content-between'>
                                     <div class='d-inline'>
-                                        <input type='checkbox' class='mr-2'>
+                                        <input type='checkbox' class='checkbox-item mr-2'>
                                         <span>${newTask}</span>
                                     </div>
                                     <div>
@@ -73,13 +73,23 @@ let deleteItem = function() {
         console.log(errorMessage);
       }
     });
+}
 
+var timeoutChange;
+let changeItem = function() {
+  let idTochange = $(this).closest('li').find('id-item').text();
+  console.log( `ID:${idToChange} cheked? ${$(this).is(':checked')}` );
+  //clearTimeout(timeoutChange);
+  //timeoutChange = function(){
+
+  //}
 }
 
 $(document).ready( function(){
     showAllTasks();
     $(document).on('click' , '.btn-add-item' , insertActivity);
     $(document).on('click' , '.delete-item' , deleteItem);
+    $(document).on('change' , '.checkbox-item' , changeItem);
 })
 
 
