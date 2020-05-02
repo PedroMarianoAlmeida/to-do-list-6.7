@@ -3,10 +3,11 @@ const baseURL = 'https://altcademy-to-do-list-api.herokuapp.com';
 
 let includeNewTaskRow = function(newTask , id, completed) {
     let shouldCheckTask = completed ? 'checked' : '';
+    let classToChekedTask = completed ? 'completed-task' : ''
     $('#my-current-list').append(`<li class='text-left d-flex justify-content-between'>
                                     <div class='d-inline'>
                                         <input type='checkbox' class='checkbox-item mr-2' ${shouldCheckTask}>
-                                        <span>${newTask}</span>
+                                        <span class='${classToChekedTask} task-name'>${newTask}</span>
                                     </div>
                                     <div>
                                         <span class='delete-item'> x </span>
@@ -22,7 +23,7 @@ let showAllTasks = function(){
         dataType: 'json',
         success: function (response, textStatus) {
           for(let task of response.tasks){
-            console.log(typeof task.completed);
+            //console.log(typeof task.completed);
             includeNewTaskRow(task.content, task.id, task.completed);
           }
         },
@@ -79,9 +80,11 @@ let deleteItem = function() {
 
 var timeoutChange;
 let changeItem = function() {
-  let idToChange = ( $(this).closest('li').find('.id-item').text() ).replace(/\s+/g, ''); //This replace thing is becouse the id is comming whith a bunch os SPACE character
-  let stateCheckbox = $(this).is(':checked');
-  //console.log( `id:${idToChange} cheked? ${stateCheckbox}` );
+  let intireRow = $(this).closest('li');
+  let idToChange = ( intireRow.find('.id-item').text() ).replace(/\s+/g, ''); //This replace thing is becouse the id is comming whith a bunch os SPACE character
+  let textTask = intireRow.find('.task-name');
+  console.log(textTask.text());
+
   let adressToAPI = $(this).is(':checked') ? `/tasks/${idToChange}/mark_complete?api_key=${myID}` : `/tasks/${idToChange}/mark_active?api_key=${myID}`;
   clearTimeout(timeoutChange);
   timeoutChange = setTimeout(function(){
@@ -92,6 +95,7 @@ let changeItem = function() {
       dataType: 'json',
       success: function(response, textStatus) {
         console.log(response);
+        textTask.toggleClass('completed-task')
       },
       error: function (request, textStatus, errorMessage){
         console.log(errorMessage);
