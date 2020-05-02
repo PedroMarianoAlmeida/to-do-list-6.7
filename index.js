@@ -1,5 +1,6 @@
 const myID = '151'
 const baseURL = 'https://altcademy-to-do-list-api.herokuapp.com';
+var statusFilter = 'all';
 
 let includeNewTaskRow = function(newTask , id, completed) {  
   let shouldCheckTask = completed ? 'checked' : '';
@@ -26,12 +27,15 @@ let showTasks = function(status){
             //console.log(typeof task.completed);
             if (status === 'all') {
               includeNewTaskRow(task.content, task.id, task.completed);
+              statusFilter = 'all';
             }
             else if(status === 'active' && !task.completed) {
               includeNewTaskRow(task.content, task.id, task.completed);
+              statusFilter = 'active';
             }
             else if (status === 'completed' && task.completed) {
               includeNewTaskRow(task.content, task.id, task.completed);
+              statusFilter = 'completed'
             }
           }          
         },
@@ -57,8 +61,9 @@ let insertActivity = function() {
               }
             }),
             success: function (response, textStatus) {
-              //console.log(`${response.task.id} something`);
-              includeNewTaskRow(response.task.content, response.task.id , false);
+              if(statusFilter !== 'completed') {
+                includeNewTaskRow(response.task.content, response.task.id , false);
+              }              
               $('#new-item').val('');
             },
             error: function (request, textStatus, errorMessage) {
