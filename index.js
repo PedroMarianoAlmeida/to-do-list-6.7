@@ -1,10 +1,11 @@
 const myID = '151'
 const baseURL = 'https://altcademy-to-do-list-api.herokuapp.com';
 
-let includeNewTaskRow = function(newTask , id) {
+let includeNewTaskRow = function(newTask , id, completed) {
+    let shouldCheckTask = completed ? 'checked' : '';
     $('#my-current-list').append(`<li class='text-left d-flex justify-content-between'>
                                     <div class='d-inline'>
-                                        <input type='checkbox' class='checkbox-item mr-2'>
+                                        <input type='checkbox' class='checkbox-item mr-2' ${shouldCheckTask}>
                                         <span>${newTask}</span>
                                     </div>
                                     <div>
@@ -21,8 +22,8 @@ let showAllTasks = function(){
         dataType: 'json',
         success: function (response, textStatus) {
           for(let task of response.tasks){
-            //console.log(task);
-            includeNewTaskRow(task.content, task.id);
+            console.log(typeof task.completed);
+            includeNewTaskRow(task.content, task.id, task.completed);
           }
         },
 
@@ -48,7 +49,7 @@ let insertActivity = function() {
             }),
             success: function (response, textStatus) {
               //console.log(`${response.task.id} something`);
-              includeNewTaskRow(response.task.content, response.task.id);
+              includeNewTaskRow(response.task.content, response.task.id , false);
               $('#new-item').val('');
             },
             error: function (request, textStatus, errorMessage) {
@@ -80,9 +81,8 @@ var timeoutChange;
 let changeItem = function() {
   let idToChange = ( $(this).closest('li').find('.id-item').text() ).replace(/\s+/g, ''); //This replace thing is becouse the id is comming whith a bunch os SPACE character
   let stateCheckbox = $(this).is(':checked');
-  console.log( `id:${idToChange} cheked? ${stateCheckbox}` );
+  //console.log( `id:${idToChange} cheked? ${stateCheckbox}` );
   let adressToAPI = $(this).is(':checked') ? `/tasks/${idToChange}/mark_complete?api_key=${myID}` : `/tasks/${idToChange}/mark_active?api_key=${myID}`;
-  
   clearTimeout(timeoutChange);
   timeoutChange = setTimeout(function(){
     $.ajax({
