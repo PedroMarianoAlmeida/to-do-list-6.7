@@ -1,6 +1,6 @@
 const myID = '151'
 const baseURL = 'https://altcademy-to-do-list-api.herokuapp.com';
-var statusFilter = 'all';
+var statusFilter;
 
 let includeNewTaskRow = function(newTask , id, completed) {  
   let shouldCheckTask = completed ? 'checked' : '';
@@ -124,28 +124,34 @@ let clearTable = function() {
 var timeoutChangeTable
 let showAllTasks = function(){
   clearTimeout(timeoutChangeTable);
-  timeoutChangeTable = setTimeout( function(){
-    clearTable();
-    showTasks('all');
-  } , 500)
+  if(statusFilter !== 'all'){
+    timeoutChangeTable = setTimeout( function(){
+      clearTable();
+      showTasks('all');
+    } , 500)
+  }
 }
 
 let showActiveTasks = function() {
   clearTimeout(timeoutChangeTable);
-  timeoutChangeTable = setTimeout(function(){
-    clearTable();
-    showTasks('active');
-  } , 500);
+  if(statusFilter !== 'active') {
+    timeoutChangeTable = setTimeout(function(){
+      clearTable();
+      showTasks('active');
+    } , 500);
+  }
+
 }
 
 let showCompletedTasks = function(){
   clearTimeout(timeoutChangeTable);
-  timeoutChangeTable = setTimeout(function(){
-    clearTable();
-    showTasks('completed');
-  }, 500)
+  if(statusFilter !== 'completed'){
+    timeoutChangeTable = setTimeout(function(){
+      clearTable();
+      showTasks('completed');
+    }, 500)
+  }
 }
-
 
 $(document).ready( function(){
     showTasks('all');
@@ -155,6 +161,6 @@ $(document).ready( function(){
     $(document).on('click', '#show-all-tasks', showAllTasks);
     $(document).on('click' , '#show-active-tasks', showActiveTasks);
     $(document).on('click' , '#show-completed-tasks' , showCompletedTasks);
-})
+});
 
 
