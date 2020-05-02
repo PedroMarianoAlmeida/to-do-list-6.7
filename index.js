@@ -1,9 +1,9 @@
 const myID = '151'
 const baseURL = 'https://altcademy-to-do-list-api.herokuapp.com';
 
-let includeNewTaskRow = function(newTask , id, completed) {
-    let shouldCheckTask = completed ? 'checked' : '';
-    let classToChekedTask = completed ? 'completed-task' : ''
+let includeNewTaskRow = function(newTask , id, completed) {  
+  let shouldCheckTask = completed ? 'checked' : '';
+  let classToChekedTask = completed ? 'completed-task' : '';
     $('#my-current-list').append(`<li class='text-left d-flex justify-content-between'>
                                     <div class='d-inline'>
                                         <input type='checkbox' class='checkbox-item mr-2' ${shouldCheckTask}>
@@ -16,16 +16,25 @@ let includeNewTaskRow = function(newTask , id, completed) {
                                     </li>`);    
 }
 
-let showAllTasks = function(){
-    $.ajax({
+let showTasks = function(status){   
+  $.ajax({
         type: 'GET',
         url: `${baseURL}/tasks?api_key=${myID}`,
         dataType: 'json',
         success: function (response, textStatus) {
           for(let task of response.tasks){
             //console.log(typeof task.completed);
-            includeNewTaskRow(task.content, task.id, task.completed);
-          }
+            if (status === 'all') {
+              includeNewTaskRow(task.content, task.id, task.completed);
+            }
+            else if(status === 'active' && !task.completed) {
+              console.log('inside active');
+              includeNewTaskRow(task.content, task.id, task.completed);
+            }
+            else if (status === 'completed' && task.completed) {
+              includeNewTaskRow(task.content, task.id, task.completed);
+            }
+          }          
         },
 
         error: function (request, textStatus, errorMessage) {
@@ -83,7 +92,7 @@ let changeItem = function() {
   let intireRow = $(this).closest('li');
   let idToChange = ( intireRow.find('.id-item').text() ).replace(/\s+/g, ''); //This replace thing is becouse the id is comming whith a bunch os SPACE character
   let textTask = intireRow.find('.task-name');
-  console.log(textTask.text());
+  //console.log(textTask.text());
 
   let adressToAPI = $(this).is(':checked') ? `/tasks/${idToChange}/mark_complete?api_key=${myID}` : `/tasks/${idToChange}/mark_active?api_key=${myID}`;
   clearTimeout(timeoutChange);
@@ -104,11 +113,34 @@ let changeItem = function() {
   }, 500);  
 }
 
+let clearTable = function() {
+  $('#my-current-list').html('');
+}
+
+var timeoutChangeTable
+let showActiveTasks = function() {
+  clearTimeout(timeoutChangeTable);
+  timeoutChange = setTimeout(function(){
+    clearTable();
+    showTasks('active');
+  } , 500);
+}
+/*
+let showAllTasks = function(){
+  clearTimeout(timeoutChangeTable){
+
+  }
+}
+*/
+
 $(document).ready( function(){
-    showAllTasks();
+    showTasks('all');
     $(document).on('click' , '.btn-add-item' , insertActivity);
     $(document).on('click' , '.delete-item' , deleteItem);
     $(document).on('change' , '.checkbox-item' , changeItem);
+    //$(document).on('click', '#show-all-tasks', showTasks('all') );
+    //$('#show-active-tasks').on('click' , showActiveTasks);
+    $(document).on('click' , '#show-active-tasks', showActiveTasks);
 })
 
 
