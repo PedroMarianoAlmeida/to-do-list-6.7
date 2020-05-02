@@ -47,7 +47,7 @@ let insertActivity = function() {
               }
             }),
             success: function (response, textStatus) {
-              //console.log(response.task);
+              //console.log(`${response.task.id} something`);
               includeNewTaskRow(response.task.content, response.task.id);
               $('#new-item').val('');
             },
@@ -62,11 +62,12 @@ let insertActivity = function() {
 let deleteItem = function() {
     let intireRow = $(this).closest('li');
     let idToDelete = intireRow.find('.id-item').text();
+    //console.log(`${idToDelete}`);
     $.ajax({
       type: 'DELETE',
       url: `${baseURL}/tasks/${idToDelete}?api_key=${myID}`,
       success: function (response, textStatus) {
-        //console.log(response);
+        console.log(response);
         intireRow.remove();
       },
       error: function (request, textStatus, errorMessage) {
@@ -77,12 +78,26 @@ let deleteItem = function() {
 
 var timeoutChange;
 let changeItem = function() {
-  let idTochange = $(this).closest('li').find('id-item').text();
-  console.log( `ID:${idToChange} cheked? ${$(this).is(':checked')}` );
-  //clearTimeout(timeoutChange);
-  //timeoutChange = function(){
-
-  //}
+  let idToChange = ( $(this).closest('li').find('.id-item').text() ).replace(/\s+/g, ''); //This replace thing is becouse the id is comming whith a bunch os SPACE character
+  let stateCheckbox = $(this).is(':checked');
+  console.log( `id:${idToChange} cheked? ${stateCheckbox}` );
+  let adressToAPI = $(this).is(':checked') ? `/tasks/${idToChange}/mark_complete?api_key=${myID}` : `/tasks/${idToChange}/mark_active?api_key=${myID}`;
+  
+  clearTimeout(timeoutChange);
+  timeoutChange = setTimeout(function(){
+    $.ajax({
+      type: 'PUT',
+      url: `${baseURL}/${adressToAPI}`,
+      contentType: 'applicantion/json',
+      dataType: 'json',
+      success: function(response, textStatus) {
+        console.log(response);
+      },
+      error: function (request, textStatus, errorMessage){
+        console.log(errorMessage);
+      }
+    });
+  }, 500);  
 }
 
 $(document).ready( function(){
