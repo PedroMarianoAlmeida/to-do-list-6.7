@@ -28,7 +28,6 @@ let showTasks = function(status){
               includeNewTaskRow(task.content, task.id, task.completed);
             }
             else if(status === 'active' && !task.completed) {
-              console.log('inside active');
               includeNewTaskRow(task.content, task.id, task.completed);
             }
             else if (status === 'completed' && task.completed) {
@@ -103,7 +102,7 @@ let changeItem = function() {
       contentType: 'applicantion/json',
       dataType: 'json',
       success: function(response, textStatus) {
-        console.log(response);
+        //console.log(response);
         textTask.toggleClass('completed-task')
       },
       error: function (request, textStatus, errorMessage){
@@ -118,29 +117,39 @@ let clearTable = function() {
 }
 
 var timeoutChangeTable
+let showAllTasks = function(){
+  clearTimeout(timeoutChangeTable);
+  timeoutChangeTable = setTimeout( function(){
+    clearTable();
+    showTasks('all');
+  } , 500)
+}
+
 let showActiveTasks = function() {
   clearTimeout(timeoutChangeTable);
-  timeoutChange = setTimeout(function(){
+  timeoutChangeTable = setTimeout(function(){
     clearTable();
     showTasks('active');
   } , 500);
 }
-/*
-let showAllTasks = function(){
-  clearTimeout(timeoutChangeTable){
 
-  }
+let showCompletedTasks = function(){
+  clearTimeout(timeoutChangeTable);
+  timeoutChangeTable = setTimeout(function(){
+    clearTable();
+    showTasks('completed');
+  }, 500)
 }
-*/
+
 
 $(document).ready( function(){
     showTasks('all');
     $(document).on('click' , '.btn-add-item' , insertActivity);
     $(document).on('click' , '.delete-item' , deleteItem);
     $(document).on('change' , '.checkbox-item' , changeItem);
-    //$(document).on('click', '#show-all-tasks', showTasks('all') );
-    //$('#show-active-tasks').on('click' , showActiveTasks);
+    $(document).on('click', '#show-all-tasks', showAllTasks);
     $(document).on('click' , '#show-active-tasks', showActiveTasks);
+    $(document).on('click' , '#show-completed-tasks' , showCompletedTasks);
 })
 
 
